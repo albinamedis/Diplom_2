@@ -1,6 +1,4 @@
-package stellarburgers.nomoreparties;
-
-import java.util.Random;
+package stellarburgers.nomoreparties.user;
 
 import static stellarburgers.nomoreparties.utils.Utils.randomString;
 
@@ -11,6 +9,13 @@ public class UserGenerator {
                 .withEmail(randomString(6)+"@gmail.com")
                 .withPassword(randomString(12))
                 .withName(randomString(10));
+    }
+
+    public static User myTestUser() {
+        return new User()
+                .withEmail("gmailTest02@gmail.com")
+                .withPassword("albinamedis")
+                .withName("qazwsxedc");
     }
 
     public static User randomUserWithoutEmail() {

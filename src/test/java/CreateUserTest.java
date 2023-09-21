@@ -1,20 +1,21 @@
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import stellarburgers.nomoreparties.CreateUser;
-import stellarburgers.nomoreparties.User;
+import stellarburgers.nomoreparties.user.CreateUser;
+import stellarburgers.nomoreparties.user.User;
 import stellarburgers.nomoreparties.constants.Url;
 
-import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
-import static stellarburgers.nomoreparties.UserGenerator.*;
+import static stellarburgers.nomoreparties.user.UserGenerator.*;
 
 public class CreateUserTest {
 
     private CreateUser createUser = new CreateUser();
+    private String authToken;
 
     @Before
     public void setUp() {
@@ -25,6 +26,7 @@ public class CreateUserTest {
     public void createUser(){
         User user = randomUser();
         Response response = createUser.create(user);
+        authToken = response.path("accessToken");
         assertEquals("Неверный статус код", HttpStatus.SC_OK, response.statusCode());
     }
 
@@ -33,6 +35,7 @@ public class CreateUserTest {
         User user = randomUser();
         createUser.create(user);
         Response response = createUser.create(user);
+        authToken = response.path("accessToken");
         response.then().body("success",equalTo(false));
     }
 
@@ -41,14 +44,17 @@ public class CreateUserTest {
         User user = randomUser();
         createUser.create(user);
         Response response = createUser.create(user);
+        authToken = response.path("accessToken");
         response.then().body("message", equalTo("User already exists"));
         assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
+
     }
 
     @Test
     public void createUserWithoutEmail(){
         User user = randomUserWithoutEmail();
         Response response = createUser.create(user);
+        authToken = response.path("accessToken");
         assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
     }
 
@@ -56,6 +62,7 @@ public class CreateUserTest {
     public void createUserWithoutPassword(){
         User user = randomUserWithoutPassword();
         Response response = createUser.create(user);
+        authToken = response.path("accessToken");
         assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
     }
 
@@ -63,7 +70,13 @@ public class CreateUserTest {
     public void createUserWithoutName(){
         User user = randomUserWithoutName();
         Response response = createUser.create(user);
+        authToken = response.path("accessToken");
         assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
     }
 
-}
+    @After
+    public void tearDown() {
+        createUser.delete(authToken);
+    }
+
+    }

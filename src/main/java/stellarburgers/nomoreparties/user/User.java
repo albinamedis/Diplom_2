@@ -1,4 +1,4 @@
-package stellarburgers.nomoreparties;
+package stellarburgers.nomoreparties.user;
 
 public class User {
     private String email;
