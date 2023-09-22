@@ -1,5 +1,7 @@
 package stellarburgers.nomoreparties.utils;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.util.Random;
 
 public class Utils {
@@ -16,4 +18,5 @@ public class Utils {
 
         return buffer.toString();
     }
+
 }

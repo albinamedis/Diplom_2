@@ -31,7 +31,7 @@ public class UserLoginTest {
         Response response = createUser.create(user);
         assertEquals("Неверный статус код", HttpStatus.SC_OK, response.statusCode());
         Response loginResponse = createUser.login(credsFrom(user));
-        authToken = response.path("accessToken");
+        authToken = loginResponse.path("accessToken");
         assertEquals("Пользователь не авторизован", HttpStatus.SC_OK, loginResponse.statusCode());
         loginResponse.then().assertThat().body("success", equalTo(true));
         loginResponse.then().assertThat().body("accessToken", not(isEmptyOrNullString()));
@@ -40,27 +40,27 @@ public class UserLoginTest {
     @Test
     public void userLoginWithoutLogin() {
         User user = randomUser();
-        Response response = createUser.create(user);
+        createUser.create(user);
         Response loginResponse = createUser.login(credsFromNullEmail(user));
-        authToken = response.path("accessToken");
+        authToken = loginResponse.path("accessToken");
         assertEquals("Неверный статус код", HttpStatus.SC_UNAUTHORIZED, loginResponse.statusCode());
     }
 
     @Test
     public void userLoginWithoutPassword() {
         User user = randomUser();
-        Response response = createUser.create(user);
+        createUser.create(user);
         Response loginResponse = createUser.login(credsFromNullPassword(user));
-        authToken = response.path("accessToken");
+        authToken = loginResponse.path("accessToken");
         assertEquals("Неверный статус код", HttpStatus.SC_UNAUTHORIZED, loginResponse.statusCode());
     }
 
     @Test
     public void userLoginRandom() {
         User user = randomUser();
-        Response response = createUser.create(user);
+        createUser.create(user);
         Response loginResponse = createUser.login(credsFromRandom(user));
-        authToken = response.path("accessToken");
+        authToken = loginResponse.path("accessToken");
         assertEquals("Неверный статус код", HttpStatus.SC_UNAUTHORIZED, loginResponse.statusCode());
     }
 
