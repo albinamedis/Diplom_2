@@ -10,10 +10,7 @@ import stellarburgers.nomoreparties.orders.Order;
 import stellarburgers.nomoreparties.orders.RandomIngredients;
 import stellarburgers.nomoreparties.user.CreateUser;
 import stellarburgers.nomoreparties.user.User;
-import stellarburgers.nomoreparties.utils.Utils;
 
-import javax.sound.midi.Soundbank;
-import java.net.StandardSocketOptions;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -23,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static stellarburgers.nomoreparties.user.UserCreds.credsFrom;
 import static stellarburgers.nomoreparties.user.UserGenerator.randomUser;
 
-public class CreateOrder {
+public class CreateAndGetOrder {
 
     private String authToken;
     private List<String> idList;
@@ -121,6 +118,27 @@ public class CreateOrder {
         orderResponse.then().assertThat().body("success", equalTo(false));
         orderResponse.then().body("message", equalTo("One or more ids provided are incorrect"));
         assertEquals("Заказ не создан", HttpStatus.SC_BAD_REQUEST, orderResponse.statusCode());
+    }
+
+    @Test
+    public void getOrderWithAuth(){
+        User user = randomUser();
+        createUser.create(user);
+        Response loginResponse = createUser.login(credsFrom(user));
+        authToken = loginResponse.path("accessToken");
+        String requestBody = randomIngredients.randomStringIngredients(idList);
+        order.createOrdersWithToken(requestBody, authToken);
+        Response orderResponse = order.getOrdersWithToken(authToken);
+        orderResponse.then().assertThat().body("success", equalTo(true));
+        assertEquals("Ошибка получения списка заказов", HttpStatus.SC_OK, orderResponse.statusCode());
+    }
+
+    @Test
+    public void getOrderWithutAuth(){
+        Response orderResponse = order.getOrdersWithoutToken();
+        orderResponse.then().assertThat().body("success", equalTo(false));
+        orderResponse.then().body("message", equalTo("You should be authorised"));
+        assertEquals("Ошибка получения списка заказов", HttpStatus.SC_UNAUTHORIZED, orderResponse.statusCode());
     }
 
     @After

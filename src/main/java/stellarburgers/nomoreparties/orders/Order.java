@@ -34,5 +34,20 @@ public class Order {
                 .post(CREATE_URL);
     }
 
+    public Response getOrdersWithoutToken() {
+        return given()
+                .header("Content-type", "application/json")
+                .when()
+                .get(CREATE_URL);
+    }
+
+    public Response getOrdersWithToken(String authToken) {
+        return given()
+                .header("Content-type", "application/json")
+                .and().header("Authorization", authToken)
+                .when()
+                .get(CREATE_URL);
+    }
+
 
 }
