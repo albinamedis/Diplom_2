@@ -27,6 +27,7 @@ public class CreateUserTest {
         User user = randomUser();
         Response response = createUser.create(user);
         authToken = response.path("accessToken");
+        response.then().assertThat().body("success", equalTo(true));
         assertEquals("Неверный статус код", HttpStatus.SC_OK, response.statusCode());
     }
 
@@ -37,6 +38,7 @@ public class CreateUserTest {
         Response response = createUser.create(user);
         authToken = response.path("accessToken");
         response.then().body("success",equalTo(false));
+        assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
     }
 
     @Test
@@ -55,6 +57,7 @@ public class CreateUserTest {
         User user = randomUserWithoutEmail();
         Response response = createUser.create(user);
         authToken = response.path("accessToken");
+        response.then().body("success",equalTo(false));
         assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
     }
 
@@ -63,6 +66,7 @@ public class CreateUserTest {
         User user = randomUserWithoutPassword();
         Response response = createUser.create(user);
         authToken = response.path("accessToken");
+        response.then().body("success",equalTo(false));
         assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
     }
 
@@ -71,6 +75,7 @@ public class CreateUserTest {
         User user = randomUserWithoutName();
         Response response = createUser.create(user);
         authToken = response.path("accessToken");
+        response.then().body("success",equalTo(false));
         assertEquals("Неверный статус код", HttpStatus.SC_FORBIDDEN, response.statusCode());
     }
 

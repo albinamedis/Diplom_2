@@ -7,7 +7,6 @@ import org.junit.Test;
 import stellarburgers.nomoreparties.constants.Url;
 import stellarburgers.nomoreparties.user.CreateUser;
 import stellarburgers.nomoreparties.user.User;
-import stellarburgers.nomoreparties.user.UserCreds;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -28,13 +27,12 @@ public class UserLoginTest {
     @Test
     public void userLoginStatus200() {
         User user = randomUser();
-        Response response = createUser.create(user);
-        assertEquals("Неверный статус код", HttpStatus.SC_OK, response.statusCode());
+        createUser.create(user);
         Response loginResponse = createUser.login(credsFrom(user));
         authToken = loginResponse.path("accessToken");
-        assertEquals("Пользователь не авторизован", HttpStatus.SC_OK, loginResponse.statusCode());
         loginResponse.then().assertThat().body("success", equalTo(true));
         loginResponse.then().assertThat().body("accessToken", not(isEmptyOrNullString()));
+        assertEquals("Пользователь не авторизован", HttpStatus.SC_OK, loginResponse.statusCode());
     }
 
     @Test
@@ -43,6 +41,7 @@ public class UserLoginTest {
         createUser.create(user);
         Response loginResponse = createUser.login(credsFromNullEmail(user));
         authToken = loginResponse.path("accessToken");
+        loginResponse.then().assertThat().body("success", equalTo(false));
         assertEquals("Неверный статус код", HttpStatus.SC_UNAUTHORIZED, loginResponse.statusCode());
     }
 
@@ -52,6 +51,7 @@ public class UserLoginTest {
         createUser.create(user);
         Response loginResponse = createUser.login(credsFromNullPassword(user));
         authToken = loginResponse.path("accessToken");
+        loginResponse.then().assertThat().body("success", equalTo(false));
         assertEquals("Неверный статус код", HttpStatus.SC_UNAUTHORIZED, loginResponse.statusCode());
     }
 
@@ -61,6 +61,7 @@ public class UserLoginTest {
         createUser.create(user);
         Response loginResponse = createUser.login(credsFromRandom(user));
         authToken = loginResponse.path("accessToken");
+        loginResponse.then().assertThat().body("success", equalTo(false));
         assertEquals("Неверный статус код", HttpStatus.SC_UNAUTHORIZED, loginResponse.statusCode());
     }
 
