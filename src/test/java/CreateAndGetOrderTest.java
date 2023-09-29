@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static stellarburgers.nomoreparties.user.UserCreds.credsFrom;
 import static stellarburgers.nomoreparties.user.UserGenerator.randomUser;
 
-public class CreateAndGetOrder {
+public class CreateAndGetOrderTest {
 
     private String authToken;
     private List<String> idList;
